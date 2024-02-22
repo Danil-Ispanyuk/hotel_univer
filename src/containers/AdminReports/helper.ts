@@ -30,7 +30,7 @@ export const tableColumns = [
     key: "discountAmount",
   },
   {
-    title: "Загальна вартість, %",
+    title: "Загальна вартість, грн",
     dataIndex: "totalIncome",
     key: "totalIncome",
   },

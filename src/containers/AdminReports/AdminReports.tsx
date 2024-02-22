@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import * as Styled from "./style";
 import { AppTable } from "../../components/AppTable/AppTable";
 import { tableColumns } from "./helper";
@@ -9,18 +9,26 @@ import { IReportParam } from "../../types/report";
 const dateFormat = "DD.MM.YYYY";
 
 export const AdminReports = () => {
-  const [date, setDate] = useState<IReportParam | null>(null)
-  const {data: reports} = useGetClientReport(date || {})
+  const [date, setDate] = useState<IReportParam | null>(null);
+  const { data: reports } = useGetClientReport(
+    useMemo(() => {
+      console.log('date :>> ', date);
+      return (
+        date || {
+          startDate: dayjs().startOf("month").format("YYYY-MM-DD"),
+          endDate: dayjs(new Date()).format("YYYY-MM-DD"),
+        }
+      );
+    }, [date])
+  );
   const handleRange = (dates: any) => {
-    if(dates){
+    if (dates) {
       const startDate = dayjs(dates[0]).format("YYYY-MM-DD");
       const endDate = dayjs(dates[1]).format("YYYY-MM-DD");
       setDate({
         startDate,
-        endDate
-      })
-      console.log('startDate :>> ', startDate);
-      console.log('endDate :>> ', endDate);
+        endDate,
+      });
     }
   };
 
@@ -38,6 +46,7 @@ export const AdminReports = () => {
                 Оберіть дату заселення та виїзду:
               </Styled.FormLabel>
               <Styled.AppRangePicker
+                defaultValue={[dayjs().startOf("month"), dayjs(new Date())]}
                 onChange={(values) => handleRange(values)}
                 format={dateFormat}
                 disabledDate={(current) => {
@@ -48,22 +57,38 @@ export const AdminReports = () => {
           </Styled.DateRange>
         </Styled.TitleContainer>
         <Styled.Content>
-          <AppTable tableColumns={tableColumns} dataSource={reports?.clientStatistics as any} />
+          <AppTable
+            tableColumns={tableColumns}
+            dataSource={reports?.clientStatistics as any}
+          />
           <Styled.SummaryContainer>
             <Styled.SummaryContent>
-              Всього бронювань: <Styled.SummaryCount>{reports?.totalBookings}</Styled.SummaryCount>
+              Всього бронювань:{" "}
+              <Styled.SummaryCount>
+                {reports?.totalBookings}
+              </Styled.SummaryCount>
             </Styled.SummaryContent>
             <Styled.SummaryContent>
-              Середня вартість бронювань: <Styled.SummaryCount>{reports?.averageBookingPrice}</Styled.SummaryCount>
+              Середня вартість бронювань:{" "}
+              <Styled.SummaryCount>
+                {reports?.averageBookingPrice}
+              </Styled.SummaryCount>
             </Styled.SummaryContent>
             <Styled.SummaryContent>
-              Повний відсоток внеску: <Styled.SummaryCount>{reports?.totalPercentage}</Styled.SummaryCount>
+              Повний відсоток внеску:{" "}
+              <Styled.SummaryCount>
+                {reports?.totalPercentage}
+              </Styled.SummaryCount>
             </Styled.SummaryContent>
             <Styled.SummaryContent>
-              Повна сумма знижок: <Styled.SummaryCount>{reports?.totalDiscountAmount}</Styled.SummaryCount>
+              Повна сумма знижок:{" "}
+              <Styled.SummaryCount>
+                {reports?.totalDiscountAmount}
+              </Styled.SummaryCount>
             </Styled.SummaryContent>
             <Styled.SummaryContent>
-              Повна вартість: <Styled.SummaryCount>{reports?.totalIncome}</Styled.SummaryCount>
+              Повна вартість:{" "}
+              <Styled.SummaryCount>{reports?.totalIncome}</Styled.SummaryCount>
             </Styled.SummaryContent>
           </Styled.SummaryContainer>
         </Styled.Content>

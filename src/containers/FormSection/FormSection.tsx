@@ -86,6 +86,7 @@ export const FormSection = () => {
     watch,
     setValue,
     trigger,
+    reset,
     formState: { errors },
   } = useForm<IFormBooking>({
     resolver: yupResolver<any>(bookingSchema),
@@ -234,6 +235,7 @@ export const FormSection = () => {
           isClientVpo,
           startDate,
           endDate,
+          comment: data.comment,
           fullPrice: `${totalCount + additionalServiceCount}`,
           priceWithDiscount: `${
             totalCount + additionalServiceCount - discountCount
@@ -245,6 +247,7 @@ export const FormSection = () => {
         };
         addBooking(initialObject);
       }
+      reset()
       return;
     } catch (error) {
       return error;
